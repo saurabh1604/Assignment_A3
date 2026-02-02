@@ -234,12 +234,18 @@ If $\phi(m) < \phi(m+\epsilon)$, the function is locally increasing, so the mini
 Interval $[0, 1]$, midpoint $m = 0.5$.
 Calculate $w(0.5)$:
 $$ w(0.5) = \begin{bmatrix} 2 - 5(0.5) \\ 2 - 21(0.5) \end{bmatrix} = \begin{bmatrix} -0.5 \\ -8.5 \end{bmatrix} $$
-Calculate loss $\phi(0.5)$:
-$$ J(-0.5, -8.5) \approx 7006.5 $$
+Calculate loss $\phi(0.5) = J(-0.5, -8.5)$:
+$$ J = \frac{1}{2} \left[ (-0.5 - 8.5 - 3)^2 + (-0.5 - 17 - 5)^2 + (-0.5 - 34 - 9)^2 + (-0.5 - 51 - 13)^2 + (-0.5 - 68 - 17)^2 \right] $$
+$$ J = \frac{1}{2} \left[ (-12)^2 + (-22.5)^2 + (-43.5)^2 + (-64.5)^2 + (-85.5)^2 \right] $$
+$$ J = \frac{1}{2} \left[ 144 + 506.25 + 1892.25 + 4160.25 + 7310.25 \right] = \frac{1}{2} (14013) = 7006.5 $$
+
 Calculate perturbed point $w(0.501)$:
-$$ w(0.501) = \begin{bmatrix} 2 - 5(0.501) \\ 2 - 21(0.501) \end{bmatrix} \approx \begin{bmatrix} -0.505 \\ -8.521 \end{bmatrix} $$
-Calculate loss $\phi(0.501)$:
-$$ J(-0.505, -8.521) \approx 7035.0 $$
+$$ w(0.501) = \begin{bmatrix} 2 - 5(0.501) \\ 2 - 21(0.501) \end{bmatrix} = \begin{bmatrix} -0.505 \\ -8.521 \end{bmatrix} $$
+Calculate loss $\phi(0.501) = J(-0.505, -8.521)$:
+$$ J = \frac{1}{2} \left[ (-0.505 - 8.521 - 3)^2 + \dots + (-0.505 - 8(8.521) - 17)^2 \right] $$
+$$ J \approx \frac{1}{2} \left[ (-12.026)^2 + (-22.547)^2 + (-43.589)^2 + (-64.631)^2 + (-85.673)^2 \right] $$
+$$ J \approx \frac{1}{2} \left[ 144.6 + 508.4 + 1900.0 + 4177.2 + 7339.9 \right] \approx 7035.0 $$
+
 Comparison: $\phi(0.5) < \phi(0.501)$. The function is increasing at $0.5$.
 \textbf{Decision:} The minimum lies in the left half.
 \textbf{New Interval:} $[0, 0.5]$.
@@ -248,12 +254,18 @@ Comparison: $\phi(0.5) < \phi(0.501)$. The function is increasing at $0.5$.
 Interval $[0, 0.5]$, midpoint $m = 0.25$.
 Calculate $w(0.25)$:
 $$ w(0.25) = \begin{bmatrix} 2 - 1.25 \\ 2 - 5.25 \end{bmatrix} = \begin{bmatrix} 0.75 \\ -3.25 \end{bmatrix} $$
-Calculate loss $\phi(0.25)$:
-$$ J(0.75, -3.25) \approx 1695.3 $$
+Calculate loss $\phi(0.25) = J(0.75, -3.25)$:
+$$ J = \frac{1}{2} \left[ (0.75 - 3.25 - 3)^2 + (0.75 - 6.5 - 5)^2 + (0.75 - 13 - 9)^2 + (0.75 - 19.5 - 13)^2 + (0.75 - 26 - 17)^2 \right] $$
+$$ J = \frac{1}{2} \left[ (-5.5)^2 + (-10.75)^2 + (-21.25)^2 + (-31.75)^2 + (-42.25)^2 \right] $$
+$$ J = \frac{1}{2} \left[ 30.25 + 115.56 + 451.56 + 1008.06 + 1785.06 \right] = \frac{1}{2} (3390.5) \approx 1695.3 $$
+
 Calculate perturbed point $w(0.251)$:
 $$ w(0.251) = \begin{bmatrix} 2 - 1.255 \\ 2 - 5.271 \end{bmatrix} = \begin{bmatrix} 0.745 \\ -3.271 \end{bmatrix} $$
-Calculate loss $\phi(0.251)$:
-$$ J(0.745, -3.271) \approx 1709.3 $$
+Calculate loss $\phi(0.251) = J(0.745, -3.271)$:
+$$ J \approx \frac{1}{2} \left[ (0.745 - 3.271 - 3)^2 + \dots + (0.745 - 8(3.271) - 17)^2 \right] $$
+$$ J \approx \frac{1}{2} \left[ (-5.526)^2 + (-10.797)^2 + (-21.339)^2 + (-31.881)^2 + (-42.423)^2 \right] $$
+$$ J \approx \frac{1}{2} \left[ 30.5 + 116.6 + 455.4 + 1016.4 + 1799.7 \right] \approx 1709.3 $$
+
 Comparison: $\phi(0.25) < \phi(0.251)$. The function is increasing at $0.25$.
 \textbf{Decision:} The minimum lies in the left half.
 \textbf{New Interval:} $[0, 0.25]$.
@@ -270,11 +282,17 @@ Interval $[0, 1]$. Width $W = 1$.
 $M_1 = a + 0.25 W = 0.25$.
 $M_2 = a + 0.75 W = 0.75$.
 
-Evaluate $\phi(M_1)$ at $\eta=0.25$ (calculated previously):
+Evaluate $\phi(M_1)$ at $\eta=0.25$:
+(Calculated in Binary Search Iteration 2)
 $$ \phi(0.25) = 1695.3 $$
+
 Evaluate $\phi(M_2)$ at $\eta=0.75$:
 $$ w(0.75) = \begin{bmatrix} 2 - 3.75 \\ 2 - 15.75 \end{bmatrix} = \begin{bmatrix} -1.75 \\ -13.75 \end{bmatrix} $$
-$$ \phi(0.75) = J(-1.75, -13.75) \approx 15936.3 $$
+Calculate loss $\phi(0.75) = J(-1.75, -13.75)$:
+$$ J = \frac{1}{2} \left[ (-1.75 - 13.75 - 3)^2 + (-1.75 - 27.5 - 5)^2 + (-1.75 - 55 - 9)^2 + (-1.75 - 82.5 - 13)^2 + (-1.75 - 110 - 17)^2 \right] $$
+$$ J = \frac{1}{2} \left[ (-18.5)^2 + (-34.25)^2 + (-65.75)^2 + (-97.25)^2 + (-128.75)^2 \right] $$
+$$ J = \frac{1}{2} \left[ 342.25 + 1173.06 + 4323.06 + 9457.56 + 16576.56 \right] = \frac{1}{2} (31872.5) \approx 15936.3 $$
+
 Comparison: $\phi(M_1) < \phi(M_2)$ ($1695.3 < 15936.3$).
 \textbf{Decision:} The minimum is closer to $M_1$. Eliminate the right segment $[M_2, b]$.
 \textbf{New Interval:} $[0, 0.75]$.
@@ -286,11 +304,19 @@ $M_1 = 0 + 0.25(0.75) = 0.1875$.
 $M_2 = 0 + 0.75(0.75) = 0.5625$.
 
 Evaluate $\phi(M_1)$ at $\eta=0.1875$:
-$$ w(0.1875) = \begin{bmatrix} 2 - 0.9375 \\ 2 - 3.9375 \end{bmatrix} \approx \begin{bmatrix} 1.06 \\ -1.94 \end{bmatrix} $$
-$$ \phi(0.1875) \approx 932.8 $$
+$$ w(0.1875) = \begin{bmatrix} 2 - 0.9375 \\ 2 - 3.9375 \end{bmatrix} \approx \begin{bmatrix} 1.0625 \\ -1.9375 \end{bmatrix} $$
+Calculate loss $\phi(0.1875)$:
+$$ J = \frac{1}{2} [ (1.06 - 1.94 - 3)^2 + (1.06 - 3.88 - 5)^2 + (1.06 - 7.75 - 9)^2 + (1.06 - 11.62 - 13)^2 + (1.06 - 15.5 - 17)^2 ] $$
+$$ J \approx \frac{1}{2} [ (-3.88)^2 + (-7.82)^2 + (-15.69)^2 + (-23.56)^2 + (-31.44)^2 ] $$
+$$ J \approx \frac{1}{2} [ 15.0 + 61.1 + 246.2 + 555.1 + 988.5 ] \approx 932.8 $$
+
 Evaluate $\phi(M_2)$ at $\eta=0.5625$:
-$$ w(0.5625) = \begin{bmatrix} 2 - 2.8125 \\ 2 - 11.8125 \end{bmatrix} \approx \begin{bmatrix} -0.81 \\ -9.81 \end{bmatrix} $$
-$$ \phi(0.5625) \approx 8899.7 $$
+$$ w(0.5625) = \begin{bmatrix} 2 - 2.8125 \\ 2 - 11.8125 \end{bmatrix} \approx \begin{bmatrix} -0.8125 \\ -9.8125 \end{bmatrix} $$
+Calculate loss $\phi(0.5625)$:
+$$ J = \frac{1}{2} [ (-0.81 - 9.81 - 3)^2 + (-0.81 - 19.62 - 5)^2 + (-0.81 - 39.25 - 9)^2 + (-0.81 - 58.88 - 13)^2 + (-0.81 - 78.5 - 17)^2 ] $$
+$$ J \approx \frac{1}{2} [ (-13.62)^2 + (-25.43)^2 + (-49.06)^2 + (-72.69)^2 + (-96.31)^2 ] $$
+$$ J \approx \frac{1}{2} [ 185.5 + 646.7 + 2406.9 + 5283.8 + 9275.6 ] \approx 8899.7 $$
+
 Comparison: $\phi(M_1) < \phi(M_2)$ ($932.8 < 8899.7$).
 \textbf{Decision:} The minimum is closer to $M_1$. Eliminate the right segment $[M_2, b]$.
 \textbf{New Interval:} $[0, 0.5625]$.
