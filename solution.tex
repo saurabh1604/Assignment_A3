@@ -129,26 +129,39 @@ Since both eigenvalues $\lambda_1 > 0$ and $\lambda_2 > 0$, the Hessian matrix i
 \textbf{Conclusion:} Because the Hessian matrix $H$ is constant and positive definite everywhere, the Loss Function $J(w_0, w_1)$ is a \textbf{strictly convex function}.
 
 \section*{Part (b): Gradient Calculation}
-The gradient vector is given by:
-$$ \nabla J = \begin{bmatrix} \frac{\partial J}{\partial w_0} \\ \frac{\partial J}{\partial w_1} \end{bmatrix} = \begin{bmatrix} \sum_{i=1}^5 (\hat{y}_i - y_i) \\ \sum_{i=1}^5 (\hat{y}_i - y_i)x_i \end{bmatrix} $$
+We compute the gradient vector $\nabla J$ by directly differentiating the expanded loss function derived in Part (a).
+$$ J(w_0, w_1) = \frac{1}{2} \left[ (w_0 + w_1 - 3)^2 + (w_0 + 2w_1 - 5)^2 + (w_0 + 4w_1 - 9)^2 + (w_0 + 6w_1 - 13)^2 + (w_0 + 8w_1 - 17)^2 \right] $$
 
-Let $e_i = \hat{y}_i - y_i = (w_0 + w_1 x_i - y_i)$.
-$$ \nabla J = \begin{bmatrix} \sum e_i \\ \sum e_i x_i \end{bmatrix} $$
+Taking partial derivatives with respect to $w_0$ and $w_1$:
+
+\textbf{1. Partial derivative w.r.t $w_0$:}
+$$ \frac{\partial J}{\partial w_0} = \frac{1}{2} \cdot 2 \left[ (w_0 + w_1 - 3) + (w_0 + 2w_1 - 5) + (w_0 + 4w_1 - 9) + (w_0 + 6w_1 - 13) + (w_0 + 8w_1 - 17) \right] $$
+$$ \frac{\partial J}{\partial w_0} = (w_0 + w_1 - 3) + (w_0 + 2w_1 - 5) + (w_0 + 4w_1 - 9) + (w_0 + 6w_1 - 13) + (w_0 + 8w_1 - 17) $$
+Grouping terms:
+$$ \frac{\partial J}{\partial w_0} = 5w_0 + (1+2+4+6+8)w_1 - (3+5+9+13+17) $$
+$$ \frac{\partial J}{\partial w_0} = 5w_0 + 21w_1 - 47 $$
+
+\textbf{2. Partial derivative w.r.t $w_1$:}
+$$ \frac{\partial J}{\partial w_1} = \frac{1}{2} \cdot 2 \left[ 1(w_0 + w_1 - 3) + 2(w_0 + 2w_1 - 5) + 4(w_0 + 4w_1 - 9) + 6(w_0 + 6w_1 - 13) + 8(w_0 + 8w_1 - 17) \right] $$
+$$ \frac{\partial J}{\partial w_1} = (w_0 + w_1 - 3) + 2(w_0 + 2w_1 - 5) + 4(w_0 + 4w_1 - 9) + 6(w_0 + 6w_1 - 13) + 8(w_0 + 8w_1 - 17) $$
+Grouping terms:
+$$ \frac{\partial J}{\partial w_1} = (1+2+4+6+8)w_0 + (1^2+2^2+4^2+6^2+8^2)w_1 - (3(1)+5(2)+9(4)+13(6)+17(8)) $$
+$$ \frac{\partial J}{\partial w_1} = 21w_0 + 121w_1 - (3 + 10 + 36 + 78 + 136) $$
+$$ \frac{\partial J}{\partial w_1} = 21w_0 + 121w_1 - 263 $$
+
+Thus, the gradient vector is:
+$$ \nabla J = \begin{bmatrix} 5w_0 + 21w_1 - 47 \\ 21w_0 + 121w_1 - 263 \end{bmatrix} $$
+
+\textbf{Gradient at $w^{(0)} = [2, 2]^T$:}
+Substituting $w_0=2, w_1=2$:
+$$ \frac{\partial J}{\partial w_0} = 5(2) + 21(2) - 47 = 10 + 42 - 47 = 5 $$
+$$ \frac{\partial J}{\partial w_1} = 21(2) + 121(2) - 263 = 42 + 242 - 263 = 21 $$
+
+$$ \nabla J(2, 2) = \begin{bmatrix} 5 \\ 21 \end{bmatrix} $$
 
 \section*{Part (c): Gradient Descent Iterations}
 Initial parameters: $w^{(0)} = [2, 2]^T$.
-Initial residuals with $w^{(0)}$:
-\begin{itemize}
-    \item $i=1: \hat{y}=2+2(1)=4, y=3 \implies e=1$
-    \item $i=2: \hat{y}=2+2(2)=6, y=5 \implies e=1$
-    \item $i=3: \hat{y}=2+2(4)=10, y=9 \implies e=1$
-    \item $i=4: \hat{y}=2+2(6)=14, y=13 \implies e=1$
-    \item $i=5: \hat{y}=2+2(8)=18, y=17 \implies e=1$
-\end{itemize}
-Initial Gradient at $w^{(0)}$:
-$$ \frac{\partial J}{\partial w_0} = \sum 1 = 5 $$
-$$ \frac{\partial J}{\partial w_1} = \sum 1 \cdot x_i = 21 $$
-$$ \nabla J(w^{(0)}) = \begin{bmatrix} 5 \\ 21 \end{bmatrix} $$
+Initial Gradient calculated in Part (b): $\nabla J(w^{(0)}) = [5, 21]^T$.
 
 \subsection*{Scenario 1: Constant Learning Rate $\eta = 0.05$}
 
@@ -203,48 +216,83 @@ The results show that both scenarios lead to divergence (increasing loss) within
 \textbf{Comment:} Although decaying learning rates generally improve stability in the long run, in this specific case, the initial learning rate $\eta_1 \approx 0.067$ was higher than the constant rate $\eta=0.05$. Since $\eta=0.05$ was already too large (causing overshoot and divergence), the higher initial rate in Scenario 2 caused an even larger overshoot. The decay in the second step ($\eta_2 \approx 0.045$) was not sufficient to recover from the bad position reached after the first step. Therefore, the decaying schedule performed worse in these first two iterations.
 
 \section*{Part (e): Line Search Methods}
-We search along the direction $d = -\nabla J(w^{(0)}) = [-5, -21]^T$.
-We minimize $\phi(\eta) = J(w^{(0)} + \eta d)$.
-Initial Interval: $[0, 1]$.
+We perform a line search along the steepest descent direction $d = -\nabla J(w^{(0)}) = [-5, -21]^T$.
+We seek to minimize the function $\phi(\eta) = J(w^{(0)} + \eta d)$ with respect to step size $\eta \ge 0$.
+The point corresponding to step size $\eta$ is:
+$$ w(\eta) = w^{(0)} + \eta d = \begin{bmatrix} 2 \\ 2 \end{bmatrix} + \eta \begin{bmatrix} -5 \\ -21 \end{bmatrix} = \begin{bmatrix} 2 - 5\eta \\ 2 - 21\eta \end{bmatrix} $$
+Substituting this into the loss function $J(w_0, w_1)$:
+$$ \phi(\eta) = \frac{1}{2}\sum_{i=1}^5 \left( (2 - 5\eta) + (2 - 21\eta)x_i - y_i \right)^2 $$
+$$ \phi(\eta) = \frac{1}{2}\sum_{i=1}^5 \left( (2 + 2x_i - y_i) - \eta(5 + 21x_i) \right)^2 $$
+
+Initial Interval: $[a, b] = [0, 1]$.
 
 \subsection*{1. Binary Search}
-We compare $\phi(m)$ and $\phi(m + \epsilon)$ where $\epsilon = 10^{-3}$.
+We reduce the interval by comparing the function value at the midpoint $m = (a+b)/2$ and a slightly perturbed point $m + \epsilon$ (with $\epsilon = 10^{-3}$).
+If $\phi(m) < \phi(m+\epsilon)$, the function is locally increasing, so the minimum is to the left ($[a, m]$). Otherwise, it is to the right ($[m, b]$).
 
 \textbf{Iteration 1:}
-Current Interval: $[0, 1]$. Midpoint $m = 0.5$.
-Evaluate:
-$$ \phi(0.5) \approx 7006.5 $$
-$$ \phi(0.501) \approx 7035.0 $$
-Since $\phi(m) < \phi(m+\epsilon)$, the function is increasing at $m=0.5$. The minimum must be to the left (smaller $\eta$).
-\textbf{Reduced Interval:} $[0, 0.5]$.
+Interval $[0, 1]$, midpoint $m = 0.5$.
+Calculate $w(0.5)$:
+$$ w(0.5) = \begin{bmatrix} 2 - 5(0.5) \\ 2 - 21(0.5) \end{bmatrix} = \begin{bmatrix} -0.5 \\ -8.5 \end{bmatrix} $$
+Calculate loss $\phi(0.5)$:
+$$ J(-0.5, -8.5) \approx 7006.5 $$
+Calculate perturbed point $w(0.501)$:
+$$ w(0.501) = \begin{bmatrix} 2 - 5(0.501) \\ 2 - 21(0.501) \end{bmatrix} \approx \begin{bmatrix} -0.505 \\ -8.521 \end{bmatrix} $$
+Calculate loss $\phi(0.501)$:
+$$ J(-0.505, -8.521) \approx 7035.0 $$
+Comparison: $\phi(0.5) < \phi(0.501)$. The function is increasing at $0.5$.
+\textbf{Decision:} The minimum lies in the left half.
+\textbf{New Interval:} $[0, 0.5]$.
 
 \textbf{Iteration 2:}
-Current Interval: $[0, 0.5]$. Midpoint $m = 0.25$.
-Evaluate:
-$$ \phi(0.25) \approx 1695.3 $$
-$$ \phi(0.251) \approx 1709.3 $$
-Since $\phi(m) < \phi(m+\epsilon)$, the function is increasing at $m=0.25$. The minimum is to the left.
-\textbf{Reduced Interval:} $[0, 0.25]$.
+Interval $[0, 0.5]$, midpoint $m = 0.25$.
+Calculate $w(0.25)$:
+$$ w(0.25) = \begin{bmatrix} 2 - 1.25 \\ 2 - 5.25 \end{bmatrix} = \begin{bmatrix} 0.75 \\ -3.25 \end{bmatrix} $$
+Calculate loss $\phi(0.25)$:
+$$ J(0.75, -3.25) \approx 1695.3 $$
+Calculate perturbed point $w(0.251)$:
+$$ w(0.251) = \begin{bmatrix} 2 - 1.255 \\ 2 - 5.271 \end{bmatrix} = \begin{bmatrix} 0.745 \\ -3.271 \end{bmatrix} $$
+Calculate loss $\phi(0.251)$:
+$$ J(0.745, -3.271) \approx 1709.3 $$
+Comparison: $\phi(0.25) < \phi(0.251)$. The function is increasing at $0.25$.
+\textbf{Decision:} The minimum lies in the left half.
+\textbf{New Interval:} $[0, 0.25]$.
 
 \subsection*{2. Golden-Section Search}
-Initial Interval $[a, b] = [0, 1]$.
-Interior points: $M_1 = 1/4 = 0.25$, $M_2 = 3/4 = 0.75$.
+Initial Interval $[0, 1]$.
+We select two interior points $M_1$ and $M_2$ based on the problem statement ($1/4$ and $3/4$ positions).
+Rule:
+If $\phi(M_1) < \phi(M_2)$, the minimum is in $[a, M_2]$. Set $b = M_2$.
+If $\phi(M_1) > \phi(M_2)$, the minimum is in $[M_1, b]$. Set $a = M_1$.
 
 \textbf{Iteration 1:}
-Evaluate:
-$$ \phi(M_1) = \phi(0.25) \approx 1695.25 $$
-$$ \phi(M_2) = \phi(0.75) \approx 15936.25 $$
-Since $\phi(M_1) < \phi(M_2)$, the minimum lies in $[a, M_2]$.
-\textbf{Reduced Interval:} $[0, 0.75]$.
+Interval $[0, 1]$. Width $W = 1$.
+$M_1 = a + 0.25 W = 0.25$.
+$M_2 = a + 0.75 W = 0.75$.
+
+Evaluate $\phi(M_1)$ at $\eta=0.25$ (calculated previously):
+$$ \phi(0.25) = 1695.3 $$
+Evaluate $\phi(M_2)$ at $\eta=0.75$:
+$$ w(0.75) = \begin{bmatrix} 2 - 3.75 \\ 2 - 15.75 \end{bmatrix} = \begin{bmatrix} -1.75 \\ -13.75 \end{bmatrix} $$
+$$ \phi(0.75) = J(-1.75, -13.75) \approx 15936.3 $$
+Comparison: $\phi(M_1) < \phi(M_2)$ ($1695.3 < 15936.3$).
+\textbf{Decision:} The minimum is closer to $M_1$. Eliminate the right segment $[M_2, b]$.
+\textbf{New Interval:} $[0, 0.75]$.
 
 \textbf{Iteration 2:}
-New Interval $[a, b] = [0, 0.75]$. Width $= 0.75$.
-Valid choice for new $M_1, M_2$ (using $1/4$ and $3/4$ of new interval):
-$$ M_1 = 0 + 0.25(0.75) = 0.1875 $$
-$$ M_2 = 0 + 0.75(0.75) = 0.5625 $$
-Evaluate (for completeness, though not explicitly asked to reduce again):
+Interval $[0, 0.75]$. Width $W = 0.75$.
+Calculate new test points:
+$M_1 = 0 + 0.25(0.75) = 0.1875$.
+$M_2 = 0 + 0.75(0.75) = 0.5625$.
+
+Evaluate $\phi(M_1)$ at $\eta=0.1875$:
+$$ w(0.1875) = \begin{bmatrix} 2 - 0.9375 \\ 2 - 3.9375 \end{bmatrix} \approx \begin{bmatrix} 1.06 \\ -1.94 \end{bmatrix} $$
 $$ \phi(0.1875) \approx 932.8 $$
+Evaluate $\phi(M_2)$ at $\eta=0.5625$:
+$$ w(0.5625) = \begin{bmatrix} 2 - 2.8125 \\ 2 - 11.8125 \end{bmatrix} \approx \begin{bmatrix} -0.81 \\ -9.81 \end{bmatrix} $$
 $$ \phi(0.5625) \approx 8899.7 $$
-Since $\phi(M_1) < \phi(M_2)$, the new interval would be $[0, 0.5625]$.
+Comparison: $\phi(M_1) < \phi(M_2)$ ($932.8 < 8899.7$).
+\textbf{Decision:} The minimum is closer to $M_1$. Eliminate the right segment $[M_2, b]$.
+\textbf{New Interval:} $[0, 0.5625]$.
 
 \end{document}
