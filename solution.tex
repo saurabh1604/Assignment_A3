@@ -1,0 +1,212 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{geometry}
+\usepackage{booktabs}
+
+\geometry{a4paper, margin=1in}
+
+\title{Assignment Solution: Electricity Consumption Prediction}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section*{Problem Statement}
+We are given a dataset of 5 shops with Operating Hours ($x$) and Consumption ($y$).
+The model is linear: $\hat{y} = w_0 + w_1 x$.
+The loss function is Squared Error: $J(w_0, w_1) = \frac{1}{2}\sum_{i=1}^{5}(\hat{y}_i - y_i)^2$.
+
+Dataset:
+\begin{center}
+\begin{tabular}{c c c}
+\toprule
+Shop & $x$ & $y$ \\
+\midrule
+1 & 1 & 3 \\
+2 & 2 & 5 \\
+3 & 4 & 9 \\
+4 & 6 & 13 \\
+5 & 8 & 17 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section*{Part (a): Loss Function \& Convexity}
+
+\subsection*{1. Formulate the Loss Function}
+Substituting the model $\hat{y}_i = w_0 + w_1 x_i$ into the loss function:
+$$ J(w_0, w_1) = \frac{1}{2} \sum_{i=1}^{5} (w_0 + w_1 x_i - y_i)^2 $$
+
+Substituting the dataset values $(x_i, y_i)$:
+$$
+J(w_0, w_1) = \frac{1}{2} \left[
+(w_0 + 1w_1 - 3)^2 +
+(w_0 + 2w_1 - 5)^2 +
+(w_0 + 4w_1 - 9)^2 +
+(w_0 + 6w_1 - 13)^2 +
+(w_0 + 8w_1 - 17)^2
+\right]
+$$
+
+\subsection*{2. Compute the Hessian Matrix}
+The gradient components are:
+$$ \frac{\partial J}{\partial w_0} = \sum (\hat{y}_i - y_i) \cdot 1 $$
+$$ \frac{\partial J}{\partial w_1} = \sum (\hat{y}_i - y_i) \cdot x_i $$
+
+The second order derivatives (Hessian components) are:
+$$ \frac{\partial^2 J}{\partial w_0^2} = \sum_{i=1}^5 1 = N = 5 $$
+$$ \frac{\partial^2 J}{\partial w_0 \partial w_1} = \frac{\partial^2 J}{\partial w_1 \partial w_0} = \sum_{i=1}^5 x_i = 1 + 2 + 4 + 6 + 8 = 21 $$
+$$ \frac{\partial^2 J}{\partial w_1^2} = \sum_{i=1}^5 x_i^2 = 1^2 + 2^2 + 4^2 + 6^2 + 8^2 = 1 + 4 + 16 + 36 + 64 = 121 $$
+
+Thus, the Hessian matrix $H$ is:
+$$
+H = \begin{bmatrix}
+5 & 21 \\
+21 & 121
+\end{bmatrix}
+$$
+
+\subsection*{3. Prove Convexity}
+A function is convex if its Hessian matrix is positive semi-definite (PSD).
+For a $2 \times 2$ matrix, it is positive definite if the trace is positive and the determinant is positive (or if all eigenvalues are positive).
+
+\textbf{Method 1: Determinant and Trace}
+\begin{itemize}
+    \item $\text{Trace}(H) = 5 + 121 = 126 > 0$
+    \item $\text{Det}(H) = (5)(121) - (21)(21) = 605 - 441 = 164 > 0$
+\end{itemize}
+Since the trace and determinant are both positive, the matrix is positive definite.
+
+\textbf{Method 2: Eigenvalues}
+Solving $\det(H - \lambda I) = 0$:
+$$ (5-\lambda)(121-\lambda) - 21^2 = 0 $$
+$$ \lambda^2 - 126\lambda + 164 = 0 $$
+$$ \lambda \approx \frac{126 \pm \sqrt{126^2 - 4(164)}}{2} \approx \frac{126 \pm 123.37}{2} $$
+$$ \lambda_1 \approx 124.68, \quad \lambda_2 \approx 1.32 $$
+Since both eigenvalues are positive, $H$ is positive definite.
+
+\textbf{Conclusion:} Since the Hessian is positive definite everywhere (constant matrix), $J(w_0, w_1)$ is a strictly convex function.
+
+\section*{Part (b): Gradient Calculation}
+The gradient vector is given by:
+$$ \nabla J = \begin{bmatrix} \frac{\partial J}{\partial w_0} \\ \frac{\partial J}{\partial w_1} \end{bmatrix} = \begin{bmatrix} \sum_{i=1}^5 (\hat{y}_i - y_i) \\ \sum_{i=1}^5 (\hat{y}_i - y_i)x_i \end{bmatrix} $$
+
+Let $e_i = \hat{y}_i - y_i = (w_0 + w_1 x_i - y_i)$.
+$$ \nabla J = \begin{bmatrix} \sum e_i \\ \sum e_i x_i \end{bmatrix} $$
+
+\section*{Part (c): Gradient Descent Iterations}
+Initial parameters: $w^{(0)} = [2, 2]^T$.
+Initial residuals with $w^{(0)}$:
+\begin{itemize}
+    \item $i=1: \hat{y}=2+2(1)=4, y=3 \implies e=1$
+    \item $i=2: \hat{y}=2+2(2)=6, y=5 \implies e=1$
+    \item $i=3: \hat{y}=2+2(4)=10, y=9 \implies e=1$
+    \item $i=4: \hat{y}=2+2(6)=14, y=13 \implies e=1$
+    \item $i=5: \hat{y}=2+2(8)=18, y=17 \implies e=1$
+\end{itemize}
+Initial Gradient at $w^{(0)}$:
+$$ \frac{\partial J}{\partial w_0} = \sum 1 = 5 $$
+$$ \frac{\partial J}{\partial w_1} = \sum 1 \cdot x_i = 21 $$
+$$ \nabla J(w^{(0)}) = \begin{bmatrix} 5 \\ 21 \end{bmatrix} $$
+
+\subsection*{Scenario 1: Constant Learning Rate $\eta = 0.05$}
+
+\textbf{Iteration 1:}
+$$ w^{(1)} = w^{(0)} - \eta \nabla J(w^{(0)}) $$
+$$ w^{(1)} = \begin{bmatrix} 2 \\ 2 \end{bmatrix} - 0.05 \begin{bmatrix} 5 \\ 21 \end{bmatrix} = \begin{bmatrix} 2 - 0.25 \\ 2 - 1.05 \end{bmatrix} = \begin{bmatrix} 1.75 \\ 0.95 \end{bmatrix} $$
+
+\textbf{Iteration 2:}
+Calculate gradient at $w^{(1)} = [1.75, 0.95]^T$.
+Errors $e_i = 1.75 + 0.95 x_i - y_i$:
+\begin{itemize}
+    \item $x=1: 1.75 + 0.95 - 3 = -0.3$
+    \item $x=2: 1.75 + 1.90 - 5 = -1.35$
+    \item $x=4: 1.75 + 3.80 - 9 = -3.45$
+    \item $x=6: 1.75 + 5.70 - 13 = -5.55$
+    \item $x=8: 1.75 + 7.60 - 17 = -7.65$
+\end{itemize}
+Gradient components:
+$$ \frac{\partial J}{\partial w_0} = \sum e_i = -0.3 - 1.35 - 3.45 - 5.55 - 7.65 = -18.3 $$
+$$ \frac{\partial J}{\partial w_1} = \sum e_i x_i = -0.3(1) - 1.35(2) - 3.45(4) - 5.55(6) - 7.65(8) $$
+$$ = -0.3 - 2.7 - 13.8 - 33.3 - 61.2 = -111.3 $$
+$$ \nabla J(w^{(1)}) = \begin{bmatrix} -18.3 \\ -111.3 \end{bmatrix} $$
+
+Update:
+$$ w^{(2)} = w^{(1)} - \eta \nabla J(w^{(1)}) $$
+$$ w^{(2)} = \begin{bmatrix} 1.75 \\ 0.95 \end{bmatrix} - 0.05 \begin{bmatrix} -18.3 \\ -111.3 \end{bmatrix} = \begin{bmatrix} 1.75 + 0.915 \\ 0.95 + 5.565 \end{bmatrix} = \begin{bmatrix} 2.665 \\ 6.515 \end{bmatrix} $$
+
+\subsection*{Scenario 2: Decaying Learning Rate $\eta_t = 0.1 e^{-0.4t}$}
+
+\textbf{Iteration 1 ($t=1$):}
+$$ \eta_1 = 0.1 e^{-0.4(1)} \approx 0.1(0.67032) = 0.06703 $$
+Using $\nabla J(w^{(0)}) = [5, 21]^T$:
+$$ w^{(1)} = \begin{bmatrix} 2 \\ 2 \end{bmatrix} - 0.06703 \begin{bmatrix} 5 \\ 21 \end{bmatrix} = \begin{bmatrix} 2 - 0.33515 \\ 2 - 1.40763 \end{bmatrix} = \begin{bmatrix} 1.66485 \\ 0.59237 \end{bmatrix} $$
+
+\textbf{Iteration 2 ($t=2$):}
+$$ \eta_2 = 0.1 e^{-0.4(2)} = 0.1 e^{-0.8} \approx 0.1(0.44933) = 0.04493 $$
+Calculate gradient at $w^{(1)} = [1.66485, 0.59237]^T$.
+(Using computed values from Python script for precision):
+$$ \nabla J(w^{(1)}) \approx \begin{bmatrix} -26.24 \\ -156.37 \end{bmatrix} $$
+Update:
+$$ w^{(2)} = \begin{bmatrix} 1.66485 \\ 0.59237 \end{bmatrix} - 0.04493 \begin{bmatrix} -26.24 \\ -156.37 \end{bmatrix} $$
+$$ w^{(2)} \approx \begin{bmatrix} 1.66485 + 1.17889 \\ 0.59237 + 7.02596 \end{bmatrix} = \begin{bmatrix} 2.8437 \\ 7.6183 \end{bmatrix} $$
+
+\section*{Part (d): Stability Analysis}
+The results show that both scenarios lead to divergence (increasing loss) within the first two iterations, but Scenario 2 is \textbf{less stable} initially.
+
+\begin{itemize}
+    \item \textbf{Scenario 1 (Constant $\eta=0.05$):} The loss increased from $2.5$ to $51.6$ to $1398.1$.
+    \item \textbf{Scenario 2 (Decaying):} The loss increased from $2.5$ to $101.3$ to $2135.8$.
+\end{itemize}
+
+\textbf{Comment:} Although decaying learning rates generally improve stability in the long run, in this specific case, the initial learning rate $\eta_1 \approx 0.067$ was higher than the constant rate $\eta=0.05$. Since $\eta=0.05$ was already too large (causing overshoot and divergence), the higher initial rate in Scenario 2 caused an even larger overshoot. The decay in the second step ($\eta_2 \approx 0.045$) was not sufficient to recover from the bad position reached after the first step. Therefore, the decaying schedule performed worse in these first two iterations.
+
+\section*{Part (e): Line Search Methods}
+We search along the direction $d = -\nabla J(w^{(0)}) = [-5, -21]^T$.
+We minimize $\phi(\eta) = J(w^{(0)} + \eta d)$.
+Initial Interval: $[0, 1]$.
+
+\subsection*{1. Binary Search}
+We compare $\phi(m)$ and $\phi(m + \epsilon)$ where $\epsilon = 10^{-3}$.
+
+\textbf{Iteration 1:}
+Current Interval: $[0, 1]$. Midpoint $m = 0.5$.
+Evaluate:
+$$ \phi(0.5) \approx 7006.5 $$
+$$ \phi(0.501) \approx 7035.0 $$
+Since $\phi(m) < \phi(m+\epsilon)$, the function is increasing at $m=0.5$. The minimum must be to the left (smaller $\eta$).
+\textbf{Reduced Interval:} $[0, 0.5]$.
+
+\textbf{Iteration 2:}
+Current Interval: $[0, 0.5]$. Midpoint $m = 0.25$.
+Evaluate:
+$$ \phi(0.25) \approx 1695.3 $$
+$$ \phi(0.251) \approx 1709.3 $$
+Since $\phi(m) < \phi(m+\epsilon)$, the function is increasing at $m=0.25$. The minimum is to the left.
+\textbf{Reduced Interval:} $[0, 0.25]$.
+
+\subsection*{2. Golden-Section Search}
+Initial Interval $[a, b] = [0, 1]$.
+Interior points: $M_1 = 1/4 = 0.25$, $M_2 = 3/4 = 0.75$.
+
+\textbf{Iteration 1:}
+Evaluate:
+$$ \phi(M_1) = \phi(0.25) \approx 1695.25 $$
+$$ \phi(M_2) = \phi(0.75) \approx 15936.25 $$
+Since $\phi(M_1) < \phi(M_2)$, the minimum lies in $[a, M_2]$.
+\textbf{Reduced Interval:} $[0, 0.75]$.
+
+\textbf{Iteration 2:}
+New Interval $[a, b] = [0, 0.75]$. Width $= 0.75$.
+Valid choice for new $M_1, M_2$ (using $1/4$ and $3/4$ of new interval):
+$$ M_1 = 0 + 0.25(0.75) = 0.1875 $$
+$$ M_2 = 0 + 0.75(0.75) = 0.5625 $$
+Evaluate (for completeness, though not explicitly asked to reduce again):
+$$ \phi(0.1875) \approx 932.8 $$
+$$ \phi(0.5625) \approx 8899.7 $$
+Since $\phi(M_1) < \phi(M_2)$, the new interval would be $[0, 0.5625]$.
+
+\end{document}
