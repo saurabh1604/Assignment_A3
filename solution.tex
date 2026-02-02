@@ -52,43 +52,81 @@ J(w_0, w_1) = \frac{1}{2} \left[
 $$
 
 \subsection*{2. Compute the Hessian Matrix}
-The gradient components are:
-$$ \frac{\partial J}{\partial w_0} = \sum (\hat{y}_i - y_i) \cdot 1 $$
-$$ \frac{\partial J}{\partial w_1} = \sum (\hat{y}_i - y_i) \cdot x_i $$
+To find the Hessian, we first determine the first-order partial derivatives (Gradient) using the Chain Rule.
+Recall $J(w_0, w_1) = \frac{1}{2}\sum_{i=1}^{N}(\hat{y}_i - y_i)^2$ where $\hat{y}_i = w_0 + w_1 x_i$.
 
-The second order derivatives (Hessian components) are:
-$$ \frac{\partial^2 J}{\partial w_0^2} = \sum_{i=1}^5 1 = N = 5 $$
-$$ \frac{\partial^2 J}{\partial w_0 \partial w_1} = \frac{\partial^2 J}{\partial w_1 \partial w_0} = \sum_{i=1}^5 x_i = 1 + 2 + 4 + 6 + 8 = 21 $$
-$$ \frac{\partial^2 J}{\partial w_1^2} = \sum_{i=1}^5 x_i^2 = 1^2 + 2^2 + 4^2 + 6^2 + 8^2 = 1 + 4 + 16 + 36 + 64 = 121 $$
+\textbf{Step 1: First Derivatives (Gradient)}
+$$ \frac{\partial J}{\partial w_0} = \sum_{i=1}^{N} (\hat{y}_i - y_i) \frac{\partial \hat{y}_i}{\partial w_0} = \sum_{i=1}^{N} (w_0 + w_1 x_i - y_i) \cdot (1) $$
+$$ \frac{\partial J}{\partial w_1} = \sum_{i=1}^{N} (\hat{y}_i - y_i) \frac{\partial \hat{y}_i}{\partial w_1} = \sum_{i=1}^{N} (w_0 + w_1 x_i - y_i) \cdot (x_i) $$
+
+\textbf{Step 2: Second Derivatives (Hessian Elements)}
+Differentiating the gradient components again:
+1. With respect to $w_0$:
+$$ \frac{\partial^2 J}{\partial w_0^2} = \frac{\partial}{\partial w_0} \sum_{i=1}^{N} (w_0 + w_1 x_i - y_i) = \sum_{i=1}^{N} 1 = N $$
+Substituting $N=5$:
+$$ \frac{\partial^2 J}{\partial w_0^2} = 5 $$
+
+2. With respect to $w_0$ and $w_1$ (Mixed partial derivative):
+$$ \frac{\partial^2 J}{\partial w_0 \partial w_1} = \frac{\partial}{\partial w_1} \sum_{i=1}^{N} (w_0 + w_1 x_i - y_i) = \sum_{i=1}^{N} x_i $$
+Summing the $x$ values:
+$$ \sum x_i = 1 + 2 + 4 + 6 + 8 = 21 $$
+$$ \frac{\partial^2 J}{\partial w_0 \partial w_1} = 21 $$
+(Note: By symmetry of continuous functions, $\frac{\partial^2 J}{\partial w_1 \partial w_0} = 21$).
+
+3. With respect to $w_1$:
+$$ \frac{\partial^2 J}{\partial w_1^2} = \frac{\partial}{\partial w_1} \sum_{i=1}^{N} (w_0 + w_1 x_i - y_i) x_i = \sum_{i=1}^{N} x_i \cdot x_i = \sum_{i=1}^{N} x_i^2 $$
+Summing the $x^2$ values:
+$$ \sum x_i^2 = 1^2 + 2^2 + 4^2 + 6^2 + 8^2 = 1 + 4 + 16 + 36 + 64 = 121 $$
+$$ \frac{\partial^2 J}{\partial w_1^2} = 121 $$
 
 Thus, the Hessian matrix $H$ is:
 $$
 H = \begin{bmatrix}
+\frac{\partial^2 J}{\partial w_0^2} & \frac{\partial^2 J}{\partial w_0 \partial w_1} \\
+\frac{\partial^2 J}{\partial w_1 \partial w_0} & \frac{\partial^2 J}{\partial w_1^2}
+\end{bmatrix} = \begin{bmatrix}
 5 & 21 \\
 21 & 121
 \end{bmatrix}
 $$
 
 \subsection*{3. Prove Convexity}
-A function is convex if its Hessian matrix is positive semi-definite (PSD).
-For a $2 \times 2$ matrix, it is positive definite if the trace is positive and the determinant is positive (or if all eigenvalues are positive).
+Mathematically, a continuously differentiable function of several variables is strictly convex if its Hessian matrix is \textbf{Positive Definite} for all points in its domain.
 
-\textbf{Method 1: Determinant and Trace}
+For a symmetric $2 \times 2$ matrix $H = \begin{bmatrix} A & B \\ B & C \end{bmatrix}$, the conditions for Positive Definiteness are:
+\begin{enumerate}
+    \item $A > 0$
+    \item $\det(H) = AC - B^2 > 0$
+\end{enumerate}
+Alternatively, the matrix is Positive Definite if all its eigenvalues are strictly positive.
+
+\textbf{Method 1: Sylvester's Criterion (Determinant check)}
 \begin{itemize}
-    \item $\text{Trace}(H) = 5 + 121 = 126 > 0$
-    \item $\text{Det}(H) = (5)(121) - (21)(21) = 605 - 441 = 164 > 0$
+    \item First leading principal minor: $H_{1,1} = 5 > 0$. (Satisfied)
+    \item Second leading principal minor (Determinant):
+    $$ \det(H) = (5)(121) - (21)(21) = 605 - 441 = 164 $$
+    Since $164 > 0$, the determinant is positive.
 \end{itemize}
-Since the trace and determinant are both positive, the matrix is positive definite.
+Since all leading principal minors are positive, $H$ is Positive Definite.
 
-\textbf{Method 2: Eigenvalues}
-Solving $\det(H - \lambda I) = 0$:
+\textbf{Method 2: Eigenvalue Analysis}
+We find the eigenvalues $\lambda$ by solving the characteristic equation $\det(H - \lambda I) = 0$:
+$$ \det \begin{bmatrix} 5-\lambda & 21 \\ 21 & 121-\lambda \end{bmatrix} = 0 $$
 $$ (5-\lambda)(121-\lambda) - 21^2 = 0 $$
+Expanding the terms:
+$$ (605 - 5\lambda - 121\lambda + \lambda^2) - 441 = 0 $$
 $$ \lambda^2 - 126\lambda + 164 = 0 $$
-$$ \lambda \approx \frac{126 \pm \sqrt{126^2 - 4(164)}}{2} \approx \frac{126 \pm 123.37}{2} $$
-$$ \lambda_1 \approx 124.68, \quad \lambda_2 \approx 1.32 $$
-Since both eigenvalues are positive, $H$ is positive definite.
+Using the quadratic formula $\lambda = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$:
+$$ \lambda = \frac{126 \pm \sqrt{(-126)^2 - 4(1)(164)}}{2} $$
+$$ \lambda = \frac{126 \pm \sqrt{15876 - 656}}{2} = \frac{126 \pm \sqrt{15220}}{2} $$
+$$ \sqrt{15220} \approx 123.37 $$
+The two eigenvalues are:
+$$ \lambda_1 \approx \frac{126 + 123.37}{2} = 124.685 $$
+$$ \lambda_2 \approx \frac{126 - 123.37}{2} = 1.315 $$
 
-\textbf{Conclusion:} Since the Hessian is positive definite everywhere (constant matrix), $J(w_0, w_1)$ is a strictly convex function.
+Since both eigenvalues $\lambda_1 > 0$ and $\lambda_2 > 0$, the Hessian matrix is Positive Definite.
+
+\textbf{Conclusion:} Because the Hessian matrix $H$ is constant and positive definite everywhere, the Loss Function $J(w_0, w_1)$ is a \textbf{strictly convex function}.
 
 \section*{Part (b): Gradient Calculation}
 The gradient vector is given by:
